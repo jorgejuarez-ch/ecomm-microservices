@@ -38,7 +38,7 @@ namespace BuildingBlocks.Exceptions.Handler
                 (
                     exception.Message,
                     exception.GetType().Name,
-                    httpContext.Response.StatusCode = StatusCodes.Status400BadRequest
+                    httpContext.Response.StatusCode = StatusCodes.Status404NotFound
                 ),
                 _ =>
                 (
