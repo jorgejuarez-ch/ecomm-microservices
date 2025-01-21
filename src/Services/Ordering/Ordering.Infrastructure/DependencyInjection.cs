@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,9 +11,15 @@ public static class DependencyInjection
     {
         string connectionString = configuration.GetConnectionString("Database")!;
 
-        //// Add services to the container.
-        // services.AddDbContext<ApplicationDbContext>(options =>
-        //      options.UseSQlServer(connectionString));
+        services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
+
+        // Add services to the container.
+        services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+        {
+            options.AddInterceptors(serviceProvider.GetServices<ISaveChangesInterceptor>());
+            options.UseSqlServer(connectionString);
+        });
 
         // services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
