@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ordering.Application.Data;
@@ -19,7 +18,7 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
         {
             options.AddInterceptors(serviceProvider.GetServices<ISaveChangesInterceptor>());
-            options.UseSqlServer(connectionString);
+            options.UseSqlServer(connectionString).ConfigureWarnings(warnings => warnings.Log(RelationalEventId.PendingModelChangesWarning));
         });
 
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
@@ -27,10 +26,10 @@ public static class DependencyInjection
         return services;
     }
 
-    public static WebApplication UseApiServices(this WebApplication app)
-    {
-        // app.MapCarter();
+    //public static WebApplication UseApiServices(this WebApplication app)
+    //{
+    //    // app.MapCarter();
 
-        return app;
-    }
+    //    return app;
+    //}
 }
